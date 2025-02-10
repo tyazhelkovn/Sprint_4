@@ -1,61 +1,46 @@
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import static org.junit.Assert.assertEquals;
+
+@RunWith(Parameterized.class)
 public class AccountTest {
+
+    private final String name;
+    private final boolean expectedResult;
+
+    public AccountTest(String name, boolean expectedResult) {
+        this.name = name;
+        this.expectedResult = expectedResult;
+    }
+
+    @Parameterized.Parameters
+    public static Object[][] getName() {
+        return new Object[][]{
+                {"T T", true},
+                {"Testtest Testtestst", true},
+                {" Test Test", false},
+                {"Test Test ", false},
+                {"TestTest", false},
+                {"Test Test Test", false},
+                {"T", false},
+                {"Testtesttest Testestestes", false},
+                {" Testtesttest  Testestestes", false},
+                {"Testtesttest  Testestestes ", false}
+        };
+    }
 
     @Test
     public void successCheckNameToEmbossWithShortName() {
-        Account account = new Account("T T");
+        Account account = new Account(name);
         boolean actual = account.checkNameToEmboss();
-        assertEquals(true, actual);
+        assertEquals(expectedResult, actual);
     }
 
-    @Test
-    public void successCheckNameToEmbossWithLongName() {
-        Account account = new Account("Testtest Testtestst");
-        boolean actual = account.checkNameToEmboss();
-        assertEquals(true, actual);
-    }
-
-    @Test
-    public void checkNameToEmbossWithBlankBeforeName() {
-        Account account = new Account(" Test Test");
-        boolean actual = account.checkNameToEmboss();
-        assertEquals(false, actual);
-    }
-
-    @Test
-    public void checkNameToEmbossWithBlankAfterName() {
-        Account account = new Account("Test Test ");
-        boolean actual = account.checkNameToEmboss();
-        assertEquals(false, actual);
-    }
-
-    @Test
-    public void checkNameToEmbossWithoutBlankInName() {
-        Account account = new Account("TestTest");
-        boolean actual = account.checkNameToEmboss();
-        assertEquals(false, actual);
-    }
-
-    @Test
-    public void checkNameToEmbossWithSeveralBlanksInName() {
-        Account account = new Account("Test Test Test");
-        boolean actual = account.checkNameToEmboss();
-        assertEquals(false, actual);
-    }
-
-    @Test
-    public void checkNameToEmbossWithOverShortName() {
-        Account account = new Account("T");
-        boolean actual = account.checkNameToEmboss();
-        assertEquals(false, actual);
-    }
-
-    @Test
-    public void checkNameToEmbossWithOverLongName() {
-        Account account = new Account("Testtesttest Testestestes");
-        boolean actual = account.checkNameToEmboss();
-        assertEquals(false, actual);
+    @Test(expected = NullPointerException.class)
+    public void getNullNameException() {
+        Account account = new Account(null);
+        account.checkNameToEmboss();
     }
 }
